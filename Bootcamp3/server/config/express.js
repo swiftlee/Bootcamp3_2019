@@ -1,4 +1,4 @@
-var path = require('path'),  
+const path = require('path'),
     express = require('express'),  //refers to Express the middleware helper for Node.js 
     mongoose = require('mongoose'),
     morgan = require('morgan'),
@@ -9,12 +9,12 @@ var path = require('path'),
 
 module.exports.init = function() {
   //connect to database
-  mongoose.connect(config.db.uri, { useNewUrlParser: true });
+  mongoose.connect(config.db.uri, { useNewUrlParser: true }).then(() => console.log("Mongo successfully connected.")).catch((err) => console.log(`Mongo error: ${err}`));
     mongoose.set('useCreateIndex', true);
     mongoose.set('useFindAndModify', false);
 
   //initialize app
-  var app = express();
+  const app = express();
 
   //enable request logging for development debugging
   app.use(morgan('dev'));
@@ -32,7 +32,7 @@ module.exports.init = function() {
      use the listings router middleware for requests to the api 
      check the variables list above
   */
-  app.use('/api/listings');
+  app.use('/api/listings', listingsRouter);
 
 
    /* Request Handler for coordinates
@@ -54,6 +54,5 @@ module.exports.init = function() {
    */
    //res.sendFile(path.resolve(...));
   });
-  
   return app;
 };  
