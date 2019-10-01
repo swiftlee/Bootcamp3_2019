@@ -1,5 +1,5 @@
 {
-  "name": "Bootcamp#3",
+  "name": "bootcamp3",
   "version": "3.0.0",
   "description": "Routing server-side requests using ExpressJS",
   "main": "server.js",
@@ -14,6 +14,11 @@
     "request": "^2.88.0",
     "should": "^13.2.3",
     "supertest": "^4.0.2"
+  },
+  "scripts": {
+    "start": "nodemon app.js",
+    "model-test": "mocha ./server/tests/listings.server.model.test.js",
+    "routes-test": "mocha ./server/tests/listings.server.routes.test.js"
   },
   "devDependencies": {}
 }
