@@ -9,6 +9,7 @@ const path = require('path'),
 
 module.exports.init = function () {
     //connect to database
+    console.log(config.db.uri);
     mongoose.connect(config.db.uri, {useNewUrlParser: true}).then(() => console.log("Mongo successfully connected.")).catch((err) => console.log(`Mongo error: ${err}`));
     mongoose.set('useCreateIndex', true);
     mongoose.set('useFindAndModify', false);

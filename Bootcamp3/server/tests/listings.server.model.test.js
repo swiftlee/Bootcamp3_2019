@@ -11,12 +11,12 @@
 
   */
 
-var should = require('should'), 
+let should = require('should'),
     mongoose = require('mongoose'), 
     Listing = require('../models/listings.server.model'), 
     config = require('../config/config');
 
-var listing, id, latitude, longitude;
+let listing, id, latitude, longitude;
 
 listing =  {
   code: "LBWEST", 

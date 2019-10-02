@@ -1,9 +1,8 @@
-
 /* Dependencies */
-var mongoose = require('mongoose'), 
+let mongoose = require('mongoose'),
     Listing = require('../models/listings.server.model.js'),
     coordinates = require('./coordinates.server.controller.js');
-    
+
 /*
   In this file, you should use Mongoose queries in order to retrieve/add/remove/update listings.
   On an error you should send a 404 status code, as well as the error message. 
@@ -22,60 +21,96 @@ var mongoose = require('mongoose'),
  */
 
 /* Create a listing */
-exports.create = function(req, res) {
+exports.create = function (req, res) {
+    console.log(req.results);
 
-  /* Instantiate a Listing */
-  var listing = new Listing(req.body);
-
-  /* save the coordinates (located in req.results if there is an address property) */
-  if(req.results) {
-    listing.coordinates = {
-      latitude: req.results.lat, 
-      longitude: req.results.lng
-    };
-  }
- 
-  /* Then save the listing */
-  listing.save(function(err) {
-    if(err) {
-      console.log(err);
-      res.status(400).send(err);
-    } else {
-      res.json(listing);
-      console.log(listing)
+    /* save the coordinates (located in req.results if there is an address property) */
+    if (req.results) {
+        req.body.coordinates = {
+            latitude: req.results.latitude,
+            longitude: req.results.longitude
+        };
     }
-  });
+
+    /* Instantiate a Listing */
+    let listing = new Listing(req.body);
+
+    /* Then save the listing */
+    listing.save(function (err) {
+        if (err) {
+            console.log(err);
+            res.status(400).send(err);
+        } else {
+            res.status(200).json(listing);
+        }
+    });
 };
 
 /* Show the current listing */
-exports.read = function(req, res) {
-  /* send back the listing as json from the request */
-  res.json(req.listing);
+exports.read = function (req, res) {
+    const listing = req.listing;
+    /* send back the listing as json from the request */
+    if (listing) {
+        Listing.findOne({_id: listing._id}, (err, record) => {
+            if (err)
+                res.status(400).send(err);
+            else if (record)
+                res.status(200).json(record);
+            else
+                res.status(400).send("Not Found");
+        });
+    } else
+        res.status(400).send("Not Found");
 };
 
 /* Update a listing - note the order in which this function is called by the router*/
-exports.update = function(req, res) {
-  var listing = req.listing;
+exports.update = function (req, res) {
+    Object.assign(req.listing, req.body);
+    req.listing.save((err) => {
+        if (err) {
+            console.log(err);
+            res.status(400).send(err);
+        } else {
+            res.status(200).json(req.listing);
+        }
+    });
 
-  /* Replace the listings's properties with the new properties found in req.body */
- 
-  /*save the coordinates (located in req.results if there is an address property) */
- 
-  /* Save the listing */
+    /* Replace the listings's properties with the new properties found in req.body */
+
+    /*save the coordinates (located in req.results if there is an address property) */
+
+    /* Save the listing */
 
 };
 
 /* Delete a listing */
-exports.delete = function(req, res) {
-  var listing = req.listing;
+exports.delete = function (req, res) {
+    let listing = req.listing;
 
-  /* Add your code to remove the listins */
+    if (listing) {
+        Listing.deleteOne({_id: listing._id}, (err, deleteInfo) => {
+            if (err)
+                res.status(400).send(err);
+            else if (deleteInfo.deletedCount)
+                res.status(200).json({statusCode: "200 \"OK\""});
+            else
+                res.status(400).send("Not Found");
+        });
+    } else
+        res.status(400).send("Not Found");
+    /* Add your code to remove the listing */
 
 };
 
 /* Retreive all the directory listings, sorted alphabetically by listing code */
-exports.list = function(req, res) {
-  /* Add your code */
+exports.list = function (req, res) {
+    /* Add your code */
+    Listing.find().sort({code: 1}).exec((err, documents) => {
+        if (err)
+            res.status(400).send(err);
+        else
+            res.status(200).json(documents);
+    });
 };
 
 /* 
@@ -85,13 +120,13 @@ exports.list = function(req, res) {
         bind it to the request object as the property 'listing', 
         then finally call next
  */
-exports.listingByID = function(req, res, next, id) {
-  Listing.findById(id).exec(function(err, listing) {
-    if(err) {
-      res.status(400).send(err);
-    } else {
-      req.listing = listing;
-      next();
-    }
-  });
+exports.listingByID = function (req, res, next, id) {
+    Listing.findById(id).exec(function (err, listing) {
+        if (err) {
+            res.status(400).send(err);
+        } else {
+            req.listing = listing;
+            next();
+        }
+    });
 };

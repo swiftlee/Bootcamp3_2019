@@ -1,2 +1,2 @@
-var app = require('./server/config/app');
-var server = app.start();
+let app = require('./server/config/app');
+let server = app.start();

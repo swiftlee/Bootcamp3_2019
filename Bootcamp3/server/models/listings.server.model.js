@@ -1,17 +1,17 @@
 //You can replace this entire file with your Bootcamp Assignment #2 - ListingSchema.js File
 
 /* Import mongoose and define any variables needed to create the schema */
-var mongoose = require('mongoose'),
+let mongoose = require('mongoose'),
     Schema = mongoose.Schema;
 
 /* Create your schema */
-var listingSchema = new Schema({
+let listingSchema = new Schema({
     /* your code here from Bootcamp Assignment #2 - ListingSchema.js File*/
     code: {type: String, required: true},
     name: {type: String, required: true},
     coordinates: {
-        latitude: mongoose.Decimal128,
-        longitude: mongoose.Decimal128
+        latitude: mongoose.Number,
+        longitude: mongoose.Number
     },
     address: String
 });
